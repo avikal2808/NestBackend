@@ -1,0 +1,20 @@
+package ghost.nest.repository;
+
+import ghost.nest.entity.EnvironmentalData;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface EnvironmentalDataRepository extends JpaRepository<EnvironmentalData, Long> {
+
+    @Query("SELECT e FROM EnvironmentalData e WHERE " +
+            "e.latitude BETWEEN :lat - (:radius / 111000.0) AND :lat + (:radius / 111000.0) AND " +
+            "e.longitude BETWEEN :lng - (:radius / (111000.0 * 0.75)) AND :lng + (:radius / (111000.0 * 0.75))")
+    List<EnvironmentalData> findWithinRadius(@Param("lat") Double lat,
+                                             @Param("lng") Double lng,
+                                             @Param("radius") Double radiusMeters);
+}
